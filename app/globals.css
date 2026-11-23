@@ -1,0 +1,175 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------- Theme tokens (space-separated RGB so Tailwind opacity modifiers work) ---------- */
+:root {
+  --bg: 255 255 255; /* white */
+  --surface: 243 246 249;
+  --card: 255 255 255;
+  --ink: 38 50 56; /* charcoal #263238 */
+  --muted: 84 100 110;
+  --line: 214 223 232;
+  --accent: 63 106 140; /* steel blue, darkened a touch for AA text contrast on white */
+  --grid: 82 127 163; /* steel #527FA3 */
+  color-scheme: light;
+}
+
+.dark {
+  --bg: 10 22 36;
+  --surface: 16 36 59; /* navy #10243B */
+  --card: 20 45 72;
+  --ink: 232 238 244;
+  --muted: 160 177 192;
+  --line: 38 64 92;
+  --accent: 132 170 203;
+  --grid: 82 127 163;
+  color-scheme: dark;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-bg text-ink font-sans antialiased overflow-x-clip;
+    text-rendering: optimizeLegibility;
+  }
+  /* Bengali: slightly larger base size (glyphs run small), roomier leading, and no letter-spacing —
+     tracking breaks up Bengali conjunct letters. The Latin brand wordmark keeps its tracking. */
+  html[lang="bn"] {
+    font-size: 106.25%;
+  }
+  html[lang="bn"] body {
+    @apply font-bn;
+    line-height: 1.75;
+  }
+  html[lang="bn"] body :not(.brand-wordmark) {
+    letter-spacing: normal !important;
+  }
+  html[lang="bn"] h1 {
+    line-height: 1.3;
+  }
+  html[lang="bn"] h2,
+  html[lang="bn"] h3,
+  html[lang="bn"] h4 {
+    line-height: 1.4;
+  }
+  h1, h2, h3, h4 {
+    @apply font-display tracking-tight;
+  }
+  html[lang="bn"] h1,
+  html[lang="bn"] h2,
+  html[lang="bn"] h3,
+  html[lang="bn"] h4 {
+    @apply font-bn tracking-normal;
+  }
+  ::selection {
+    background: rgb(82 127 163 / 0.35);
+  }
+  :focus-visible {
+    outline: 2px solid rgb(var(--accent));
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+}
+
+@layer components {
+  .container-x {
+    @apply mx-auto w-full max-w-6xl px-5 sm:px-8;
+  }
+  .section {
+    @apply relative py-20 sm:py-28;
+  }
+  .kicker {
+    @apply inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.22em] text-accent;
+  }
+  .kicker::before {
+    content: "";
+    @apply block h-px w-8 bg-accent;
+  }
+  .kicker-light {
+    color: rgb(132 170 203);
+  }
+  .kicker-light::before {
+    background: rgb(132 170 203);
+  }
+  html[lang="bn"] .kicker {
+    @apply tracking-wide normal-case text-sm;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition duration-300 ease-out;
+  }
+  .btn-primary {
+    @apply bg-navy text-white shadow-soft hover:-translate-y-0.5 hover:bg-steel hover:shadow-lift;
+  }
+  .dark .btn-primary {
+    @apply bg-steel text-white hover:bg-white hover:text-navy;
+  }
+  .btn-ghost {
+    @apply border border-line bg-card text-ink hover:-translate-y-0.5 hover:border-accent hover:text-accent;
+  }
+  .card {
+    @apply rounded-2xl border border-line bg-card shadow-soft;
+  }
+}
+
+/* ---------- Architectural / blueprint motifs ---------- */
+.blueprint {
+  background-image:
+    linear-gradient(rgb(var(--grid) / 0.09) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(var(--grid) / 0.09) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+.blueprint-fine {
+  background-image:
+    linear-gradient(rgb(var(--grid) / 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(var(--grid) / 0.07) 1px, transparent 1px);
+  background-size: 11px 11px;
+}
+.fade-mask {
+  -webkit-mask-image: linear-gradient(to bottom, #000 40%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 40%, transparent 100%);
+}
+
+/* ---------- Scroll reveal ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.8s cubic-bezier(0.2, 0.7, 0.2, 1), transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition-delay: var(--d, 0ms);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Dialog backdrop */
+dialog::backdrop {
+  background: rgb(8 18 30 / 0.72);
+  backdrop-filter: blur(4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media print {
+  header, .no-print { display: none !important; }
+}
